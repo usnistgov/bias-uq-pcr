@@ -4,11 +4,12 @@ import numpy as np
 
 F_SCALE = 1e6
 
+
 def file_to_numpy(file_abs_path: str) -> np.ndarray:
     sheet = pd.ExcelFile(file_abs_path)
     df = sheet.parse(
         sheet_name="Raw Data", header=7
-        )
+    )
     df = df.pivot(index='Cycle', columns="Well", values='1') / F_SCALE
     df = df[ORDERED_WELLS]
     return df.to_numpy()
@@ -28,6 +29,7 @@ def conc_dir_to_conc(conc_dir: str) -> float:
 
 if __name__ == '__main__':
     import os
+
     file = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         "data", "FAM", "25_vol_pt_TE", "70_nM", "CDC_HID2-1.xls"
@@ -35,4 +37,3 @@ if __name__ == '__main__':
     df = file_to_numpy(file)
     print(df)
     # file = os.path.join("")
-    

@@ -127,15 +127,6 @@ class Amplification:
 class HydrolysisProbes(Amplification):
     """Specific subclass for hydrolysis probes
 
-    >>> pbar = 0.9
-    >>> R = 1
-    >>> y = 5
-    >>> E_U0 = np.array([[y], [y]])
-    >>> V_U0 = np.array([[y, 0], [0, y]])
-    >>> cls = HydrolysisProbes(R, pbar, E_U0, V_U0)
-    >>> cls.get_V_DX(35)/cls.get_E_DX(35)/cls.get_E_DX(35)
-    >>> cls.get_V_Ui(35)[0, 0]/cls.get_E_Ui(35)[0, 0]/cls.get_E_Ui(35)[0, 0]
-
     """
 
     def __init__(self, *args, **kwargs):

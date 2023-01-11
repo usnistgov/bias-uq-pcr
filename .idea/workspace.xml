@@ -2,11 +2,55 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bbc35296-d43b-47fb-a374-86964c1f1c7e" name="Changes" comment="Add requirements and .idea">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/Fig2.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/Fig2.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/amplification.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/amplification.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plot_fig2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plot_fig2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_amplification.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_amplification.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/0_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/0_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/10_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/10_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/160_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/160_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/20_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/20_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/310_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/310_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/40_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/40_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/40_nM_500_nM_FR_primers/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/70_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/100_vol_pt_TE/70_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/5_vol_pt_TE/0_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/5_vol_pt_TE/0_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/5_vol_pt_TE/16_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/FAM/5_vol_pt_TE/16_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/0_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/0_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/16_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/16_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/256_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/256_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/32_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/32_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/64_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/64_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/100_vol_pt_TE/64_nM_500_nM_FR_primers/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/0_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/0_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/160_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/160_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/20_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/20_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/250_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/250_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/40_nM/CDC_HID2-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/40_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/80_nM/CDC_HID1-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/5_vol_pt_TE/80_nM/CDC_HID1-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/data/Probe/low_TE_high_pH/80_nM/CDC_HID2-1.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/get_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/get_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plot_fig4_write_f_cw.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plot_fig4_write_f_cw.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/bias-uq-pcr.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/bias-uq-pcr.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/diff.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/diff.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/out/bias-uq-pcr.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/out/bias-uq-pcr.pdf" afterDir="false" />
@@ -40,7 +84,49 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
-  <component name="RunManager" selected="Python tests.Python tests in test_amplification.py">
+  <component name="RunManager" selected="Python.plot_fig4_write_f_cw">
+    <configuration name="plot_fig2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/plot_fig2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="plot_fig4_write_f_cw" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="code" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/plot_fig4_write_f_cw.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_amplification.test_nu" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -71,6 +157,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.plot_fig4_write_f_cw" />
+        <item itemvalue="Python.plot_fig2" />
         <item itemvalue="Python tests.Python tests for test_amplification.test_nu" />
       </list>
     </recent_temporary>
