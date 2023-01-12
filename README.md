@@ -33,3 +33,9 @@ The raw data can be found in the directory [data/](data/).
 
 The documentation can be compiled using [sphinx](https://www.sphinx-doc.org) in [doc/](doc/).
 A pdf version of the documentation is available [here](doc/manual.pdf).
+
+# Citation
+
+The citation for the software and experimental data contained in this package is
+
+    Robert DeJaco (2023), Software and Data associated with ``Reducing Bias and Quantifying Uncertainty in Fluorescence Produced by PCR,'' National Institute of Standards and Technology, https://doi.org/10.18434/mds2-2910 (Accessed **todays date**).
