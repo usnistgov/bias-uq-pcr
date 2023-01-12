@@ -1,11 +1,53 @@
 from get_data import file_to_numpy, conc_dir_to_conc
+import typing
 import matplotlib.pyplot as plt
 from globals import CYCLE_SYMBOL
-from wells import number_to_well
+from wells import number_to_well, well_to_number
 import numpy as np
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+class Reporter:
+    def __init__(self, C: np.array, files: typing.List[str], name: str):
+        """
+
+        Parameters
+        ----------
+        C : np.array
+            concentrations of reporter in pmol/L
+        files : typing.List[str]
+            list of file names (absolute paths)
+        name : str
+            name of reporter (e.g., FAM, Probe)
+        """
+        self.n = 45
+        self.num_wells = 96
+        self.C = C
+        self.q = C.shape[0]
+        assert self.q > 1, "Must have more than one dataset!"
+        self.F = np.zeros((self.n, self.num_wells, self.q))
+        for i, f in enumerate(files):
+            self.F[:, :, i] = file_to_numpy(f)
+
+        self.f = np.zeros((self.n, self.num_wells))
+        self.df = np.zeros((self.n, self.num_wells))
+        self.name = name
+
+    def calculate(self):
+        for i in range(self.n):
+            for w in range(self.num_wells):
+                self.f[i, w] = np.inner(self.F[i, w, :], self.C) / np.inner(self.C, self.C)
+                R = self.F[i, w, :] - self.f[i, w] * self.C
+                self.df[i, w] = np.sqrt(np.inner(R, R) / (self.q - 1))
+
+    def save(self, dir: str):
+        with open(os.path.join(dir, "f_iw_%s.npy" % self.name), "wb") as file:
+            np.save(file, self.f)
+
+        with open(os.path.join(dir, "df_iw_%s.npy" % self.name), "wb") as file:
+            np.save(file, self.df)
 
 
 def get_dataset(reporter_dir, TE_dir):
@@ -32,63 +74,33 @@ def find_index(val, group):
     return i
 
 
-def main(data):
+def main(plus: Reporter, minus: Reporter):
     fig, ax = plt.subplots(figsize=(4.68504, 2.5), ncols=3, sharex=False, sharey=True)
     cycles_to_plot = [1, 20, 40]
     wells_to_plot = (
         'A1', 'C10', 'E5', 'G3', 'H11'
     )
-    markers = ['^', 'o', 'v', '*', 'd']
-    lines = ['-', '--']
 
-    for reporter, values in data.items():
+    for ii, i in enumerate(list(i - 1 for i in cycles_to_plot)):
+        for w, marker, color in zip(
+                list(map(well_to_number, wells_to_plot)),
+                ['^', 'o', 'v', '*', 'd'],
+                ['C0', 'C1', 'C2', 'C3', 'C4']
+        ):
+            kwargs = dict(color=color, clip_on=False)
+            ax[ii].plot(plus.C, plus.F[i, w], marker, mfc='None', **kwargs)
+            C = np.linspace(0, plus.C.max())
+            ax[ii].fill_between(C, (plus.f[i, w] - 3 * plus.df[i, w]) * C,
+                                (plus.f[i, w] + 3 * plus.df[i, w]) * C,
+                                alpha=0.3, **kwargs)
+            ax[ii].plot(C, plus.f[i, w] * C, '-', label="%s" % number_to_well(w), **kwargs)
 
-        # ignore high concentration points
-        for C in list(values.keys()):
-            if C > 0.2:
-                values.pop(C)
-
-        # get fit
-        f = np.zeros((45, 96))
-        df = np.zeros((45, 96))
-        q = len(values.keys())
-
-        for icycle in range(45):
-            for iwell in range(96):
-                Cwell = np.zeros(q)
-                Fwell = np.zeros(q)
-                i = 0
-                for C, val in values.items():
-                    Cwell[i] = C
-                    Fwell[i] = val[icycle, iwell]
-                    i += 1
-
-                f[icycle, iwell] = np.inner(Fwell, Cwell) / np.inner(Cwell, Cwell)
-                R = Fwell - f[icycle, iwell] * Cwell
-                df[icycle, iwell] = np.sqrt(np.inner(R, R) / (q - 1))
-
-                well_index = find_index(number_to_well(iwell), wells_to_plot)
-                cycle_index = find_index(icycle, cycles_to_plot)
-                if cycle_index < len(cycles_to_plot) and well_index < len(wells_to_plot):
-                    ireporter = find_index(reporter, ['FAM', 'Probe'])
-                    kwargs = dict(color='C%i' % well_index, clip_on=False)
-                    ax[cycle_index].plot(Cwell, Fwell, markers[well_index], mfc='None', **kwargs)
-                    C = np.linspace(0, Cwell.max())
-                    ax[cycle_index].fill_between(C,
-                                                 (f[icycle, iwell] - 3 * df[icycle, iwell]) * C,
-                                                 (f[icycle, iwell] + 3 * df[icycle, iwell]) * C,
-                                                 alpha=0.3, **kwargs)
-                    if reporter == "FAM":
-                        kwargs['label'] = "%s" % number_to_well(iwell)
-                    ax[cycle_index].plot(C, f[icycle, iwell] * C, lines[ireporter], **kwargs)
-                    if 'label' in kwargs.keys():
-                        kwargs.pop('label')
-
-        with open(os.path.join(BASE_DIR, "..", "out", "f_cw_%s.npy" % reporter), "wb") as file:
-            np.save(file, f)
-
-        with open(os.path.join(BASE_DIR, "..", "out", "df_cw_%s.npy" % reporter), "wb") as file:
-            np.save(file, df)
+            ax[ii].plot(minus.C, minus.F[i, w], marker, mfc='None', **kwargs)
+            C = np.linspace(0, minus.C.max())
+            ax[ii].fill_between(C, (minus.f[i, w] - 3 * minus.df[i, w]) * C,
+                                (minus.f[i, w] + 3 * minus.df[i, w]) * C,
+                                alpha=0.3, **kwargs)
+            ax[ii].plot(C, minus.f[i, w] * C, '-', **kwargs)
 
     ax[0].legend(loc=(0.01, 0.97), edgecolor="None", facecolor='None', ncol=len(wells_to_plot),
                  handleheight=1.5, labelspacing=0.3, columnspacing=1.5,  # handlelength=1.
@@ -119,8 +131,27 @@ def main(data):
 
 
 if __name__ == '__main__':
-    data = {
-        key: get_dataset(key, "25_vol_pt_TE") for key in ("FAM", "Probe")
-    }
+    data_plus = Reporter(
+        np.array([0.01, 0.02, 0.04, 0.07]),
+        [
+            os.path.join(BASE_DIR, "data", "FAM", "25_vol_pt_TE", "10_nM", "CDC_HID1-1.xls"),
+            os.path.join(BASE_DIR, "data", "FAM", "25_vol_pt_TE", "20_nM", "CDC_HID2-1.xls"),
+            os.path.join(BASE_DIR, "data", "FAM", "25_vol_pt_TE", "40_nM", "CDC_HID1-1.xls"),
+            os.path.join(BASE_DIR, "data", "FAM", "25_vol_pt_TE", "70_nM", "CDC_HID2-1.xls")
+        ], "+"
+    )
+    data_minus = Reporter(
+        np.array([0.04, 0.08, 0.16]),
+        [
+            os.path.join(BASE_DIR, "data", "Probe", "25_vol_pt_TE", "40_nM", "CDC_HID2-1.xls"),
+            os.path.join(BASE_DIR, "data", "Probe", "25_vol_pt_TE", "80_nM", "CDC_HID1-1.xls"),
+            os.path.join(BASE_DIR, "data", "Probe", "25_vol_pt_TE", "160_nM", "CDC_HID2-1.xls"),
+        ], "-"
+    )
 
-    main(data)
+    data_plus.calculate()
+    data_minus.calculate()
+    data_plus.save(os.path.join(BASE_DIR, "..", "out"))
+    data_minus.save(os.path.join(BASE_DIR, "..", "out"))
+
+    main(data_plus, data_minus)

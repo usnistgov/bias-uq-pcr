@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bbc35296-d43b-47fb-a374-86964c1f1c7e" name="Changes" comment="Add requirements and .idea">
-      <change afterPath="$PROJECT_DIR$/plot_figures.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/Fig4.png" beforeDir="false" afterPath="$PROJECT_DIR$/out/Fig4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/df_cw_FAM.npy" beforeDir="false" afterPath="$PROJECT_DIR$/out/df_iw_+.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/df_cw_Probe.npy" beforeDir="false" afterPath="$PROJECT_DIR$/out/df_iw_-.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/f_cw_FAM.npy" beforeDir="false" afterPath="$PROJECT_DIR$/out/f_iw_+.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/f_cw_Probe.npy" beforeDir="false" afterPath="$PROJECT_DIR$/out/f_iw_-.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plot_fig4_write_f_cw.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plot_fig4_write_f_cw.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/bias-uq-pcr.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/bias-uq-pcr.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/diff.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/diff.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/out/bias-uq-pcr.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/out/bias-uq-pcr.pdf" afterDir="false" />
@@ -37,7 +42,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.plot_figures">
+  <component name="RunManager" selected="Python.plot_fig4_write_f_cw">
     <configuration name="plot_fig2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -145,9 +150,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.plot_fig4_write_f_cw" />
         <item itemvalue="Python.plot_figures" />
         <item itemvalue="Python tests.Python tests in test_wells.py" />
-        <item itemvalue="Python.plot_fig4_write_f_cw" />
         <item itemvalue="Python.plot_fig2" />
         <item itemvalue="Python tests.Python tests for test_amplification.test_nu" />
       </list>
