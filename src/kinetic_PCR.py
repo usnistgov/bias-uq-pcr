@@ -2,6 +2,8 @@ from .amplification import Amplification
 from .globals import N_av
 import numpy as np
 
+from .wells import well_to_number
+
 
 class HydrolysisProbes(Amplification):
     """Specific subclass for hydrolysis probes
@@ -90,3 +92,14 @@ class HydrolysisProbes(Amplification):
             self.V_DX[im1] = self.get_V_DX(im1 + 1)
             self.E_F[im1, :] = self.b[im1, :] + self.d[im1, :]*self.E_DX[im1]
             self.V_F[im1, :] = self.d[im1, :] * self.d[im1, :] * self.V_DX[im1]
+
+
+def plot_fluorescence_curve(kls: HydrolysisProbes, ax, well="A1"):
+    w = well_to_number(well)
+
+    ax.plot(kls.cycles, kls.E_F.max(axis=1), ls='dotted', color="blue")
+    ax.plot(kls.cycles, kls.E_F.min(axis=1), ls='dotted', color="blue")
+
+    s = np.sqrt(kls.V_F[:, w])
+    ax.plot(kls.cycles, kls.E_F[:, w], '-', color='k')
+    ax.fill_between(kls.cycles, kls.E_F[:, w] - 3 * s, kls.E_F[:, w] + 3 * s, color='lightgrey')

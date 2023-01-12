@@ -3,6 +3,7 @@ import os
 from matplotlib import pyplot as plt
 from src.globals import CYCLE_SYMBOL
 from src.amplification import Amplification
+from src.kinetic_PCR import HydrolysisProbes, plot_fluorescence_curve
 from src.molar_fluorescence import MolarFluorescence
 from src.wells import well_to_number, number_to_well
 
@@ -110,6 +111,79 @@ def plot_figure4(plus: MolarFluorescence, minus: MolarFluorescence):
     fig.savefig(os.path.join(BASE_DIR, 'out', "Fig4.png"), transparent=True, dpi=300)
 
 
+def plot_figure5(f_plus: np.ndarray, f_minus: np.ndarray, C=0.125, Vol=20e-6, R=1.0, pbar=0.9):
+    """
+
+    Parameters
+    ----------
+    f_plus : np.ndarray
+        molar fluorescences for each cycle/well of active reporter :math:`\\mathbf{f}^+`, n by number of wells matrix
+        Determined in units of fluorescence divided by (pmol/L)
+    f_minus : np.ndarray
+        molar fluorescences for each cycle/well of inactive reporter :math:`\\mathbf{f}^-`, n by number of wells matrix
+        Determined in units of fluorescence divided by (pmol/L)
+    C : float, optional
+        concentration in pmol/L, defaults to 0.125
+    Vol : float, optional
+        volume in L, :math:`\\mathcal{V}`, defaults to 20e-6
+    R : float, optional
+        square root of ratio of probabilities, :math:`R`, defaults to 1.0
+    pbar : float, optional
+        geometric mean of probabilities, :math:`\\bar{p}`, defaults to 0.9
+
+
+    """
+    def fmt_ax(ax):
+        ax.semilogy()
+        ax.set_ylim([0.3, 100])
+        ax.tick_params(which='both', direction='in', right=True, top=True)
+        ax.set_xticks([1, 6, 11, 16, 21, 26, 31])
+        ax.set_xlim([1, 26])
+
+    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(4.68504, 3.5), sharex=True, sharey=True)
+    for N_0, icol in zip((128, 32, 16, 8), ((0, 0), (0, 1), (1, 0), (1, 1))):
+        cls = HydrolysisProbes(
+            C, Vol, f_plus, f_minus, R, pbar,
+            np.array([[N_0 / 2], [N_0 / 2]]),
+            np.array([[N_0 / 2, 0.], [0., N_0 / 2]])
+        )
+        cls.calculate()
+
+        plot_fluorescence_curve(cls, ax[icol])
+        ax[icol].annotate("$\\mathbb{E}\\left[N_0\\right]=%i$" % N_0, xy=(0.05, 0.06),
+                          xycoords='axes fraction')
+
+    for icol in ((0, 0), (0, 1), (1, 0), (1, 1)):
+        fmt_ax(ax[icol])
+        if icol[1] == 0:
+            ax[icol].set_ylabel(
+                r"$\mathbb{E}\left[F_{%s,w}\right] \pm 3\sqrt{\mathsf{Var}\left[F_{%s,w}\right]}$"
+                % (CYCLE_SYMBOL, CYCLE_SYMBOL)
+            )
+        if icol[0] == 1:
+            ax[icol].set_xlabel("Cycle, $%s$" % CYCLE_SYMBOL)
+
+    # plot background inset
+    axb = fig.add_axes([0.14, 0.265, 0.19, 0.25])
+    cls = HydrolysisProbes(
+        C, Vol, f_plus, f_minus, R, pbar,
+        np.zeros((2, 1)), np.zeros((2, 2))
+    )
+    axb.plot(cls.cycles, cls.b.max(axis=1), ls='dotted', color="purple")
+    axb.plot(cls.cycles, cls.b.min(axis=1), ls='dotted', color="purple")
+    axb.plot(cls.cycles, cls.b.mean(axis=1), ls='solid', color="purple")
+    axb.tick_params(left=True, right=True, top=True,
+                    which='both', direction='in', labelleft=False, labelright=True)
+    axb.set_xticks([1, 11, 21])
+    axb.set_xticks([6, 16], minor=True)
+    axb.set_xlim([1, 16])
+    axb.set_ylim([0.625, 1.25])
+    axb.set_yticks([0.8, 1.0, 1.2])
+
+    fig.subplots_adjust(right=0.98, top=0.98, left=0.12, hspace=0.0, wspace=0.09, bottom=0.11)
+    fig.savefig(os.path.join(BASE_DIR, "out", "Fig5.png"), transparent=True, dpi=300)
+
+
 if __name__ == '__main__':
     plot_figure2()
     Plus = MolarFluorescence(
@@ -136,3 +210,5 @@ if __name__ == '__main__':
     Minus.save(os.path.join(BASE_DIR, "out"))
 
     plot_figure4(Plus, Minus)
+
+    plot_figure5(Plus.f, Minus.f)
