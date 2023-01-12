@@ -76,17 +76,60 @@ class HydrolysisProbes(Amplification):
         self.V_DX = np.zeros(self.n)
         self.cycles = np.array([i + 1 for i in range(self.n)])
 
-    def get_E_DX(self, i):
+    def get_E_DX(self, i) -> float:
+        """
+
+        Parameters
+        ----------
+        i : int
+            cycle number
+
+        Returns
+        -------
+        float
+            :math:`\\mathbb{E}\\left[\\Delta X_i\\right]`
+
+        """
         return self.get_E_Ui(i)[0, 0] - self.E_U0[0, 0]
 
     def get_Cov_XiX0(self, i):
+        """
+
+        Parameters
+        ----------
+        i : int
+            cycle number
+
+        Returns
+        -------
+        float
+            :math:`\\mathsf{Cov}\\left[X_i, X_0\\right]`
+
+        """
         # see rocketbook `Covariance with initial`
         return self.V_U0[0, 0] / 2. * (pow(self.l1, i) + pow(self.l2, i))
 
     def get_V_DX(self, i):
+        """
+
+        Parameters
+        ----------
+        i : int
+            cycle number
+
+        Returns
+        -------
+        float
+            :math:`\\mathsf{Var}\\left[\\Delta X_i\\right]`
+
+        """
         return self.get_V_Ui(i)[0, 0] + self.V_U0[0, 0] - 2 * self.get_Cov_XiX0(i)
 
     def calculate(self):
+        """
+        Performs calculations, filling in :code:`E_F`, :code:`V_F`, :code:`E_DX`, and :code:`V_DX`.
+
+        """
         for im1 in range(self.n):
             self.E_DX[im1] = self.get_E_DX(im1 + 1)
             self.V_DX[im1] = self.get_V_DX(im1 + 1)
@@ -95,6 +138,23 @@ class HydrolysisProbes(Amplification):
 
 
 def plot_fluorescence_curve(kls: HydrolysisProbes, ax, well="A1"):
+    """
+
+    Parameters
+    ----------
+    kls : HydrolysisProbes
+        Contains all amplification data. Has already computed values
+    ax : matplotlib.axes
+        axes to plot on
+    well : str
+        name of well to plot
+
+    Notes
+    -----
+        *   Plots expected value of flourescence and shades above and below with 3 standard deviations
+        *   Also plots maximum expected value and mininum expected value of all wells in blue dashed lines
+
+    """
     w = well_to_number(well)
 
     ax.plot(kls.cycles, kls.E_F.max(axis=1), ls='dotted', color="blue")

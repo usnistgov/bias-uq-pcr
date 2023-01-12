@@ -2,10 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bbc35296-d43b-47fb-a374-86964c1f1c7e" name="Changes" comment="Add requirements and .idea">
+      <change afterPath="$PROJECT_DIR$/doc/Makefile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/make.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/manual.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/source/amplification.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/source/conf.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/source/get_data.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/source/index.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/source/kinetic_PCR.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/source/molar_fluorescence.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/source/plot_figures.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/doc/source/wells.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/other/symbolic_formulae.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/plot_figures.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot_figures.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/amplification.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/amplification.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/get_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/get_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/kinetic_PCR.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/kinetic_PCR.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plot_fig5.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/plot_fig5.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lod.py" beforeDir="false" afterPath="$PROJECT_DIR$/other/lod.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/molar_fluorescence.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/molar_fluorescence.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/bias-uq-pcr.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/bias-uq-pcr.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/diff.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/diff.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../paper/out/bias-uq-pcr.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../paper/out/bias-uq-pcr.pdf" afterDir="false" />
@@ -41,10 +59,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\rfd1\OneDrive - National Institute of Standards and Technology (NIST)\manuscripts\qPCR\code\other" />
       <recent name="C:\Users\rfd1\OneDrive - National Institute of Standards and Technology (NIST)\manuscripts\qPCR\code" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.plot_figures">
+  <component name="RunManager" selected="Python tests.Python tests in test_wells.py">
     <configuration name="plot_fig2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="code" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -159,10 +178,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests in test_wells.py" />
         <item itemvalue="Python.plot_figures" />
         <item itemvalue="Python.plot_fig5" />
         <item itemvalue="Python.plot_fig4_write_f_cw" />
-        <item itemvalue="Python tests.Python tests in test_wells.py" />
         <item itemvalue="Python.plot_fig2" />
       </list>
     </recent_temporary>

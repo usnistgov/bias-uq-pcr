@@ -53,6 +53,16 @@ def plot_figure2(R=0.9, pbar=0.85, max_cycle=4):
 
 
 def plot_figure4(plus: MolarFluorescence, minus: MolarFluorescence):
+    """Plot figure 4
+
+    Parameters
+    ----------
+    plus : MolarFluorescence
+        fluorescence data associated with active probe
+    minus : MolarFluorescence
+        fluorescence data associated with inactive probe
+
+    """
     fig, axes = plt.subplots(figsize=(4.68504, 2.5), ncols=3, sharex=False, sharey=True)
     cycles_to_plot = [1, 20, 40]
     wells_to_plot = (
@@ -206,8 +216,6 @@ if __name__ == '__main__':
 
     Plus.calculate()
     Minus.calculate()
-    Plus.save(os.path.join(BASE_DIR, "out"))
-    Minus.save(os.path.join(BASE_DIR, "out"))
 
     plot_figure4(Plus, Minus)
 

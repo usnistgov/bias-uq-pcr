@@ -1,5 +1,10 @@
 venv/
 src/__pycache__/
 __pycache__/
+
+# pytest
 test/.pytest_cache/
 .pytest_cache/
+
+# sphinx
+doc/build
