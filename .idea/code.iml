@@ -2,7 +2,20 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/.idea" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/.idea/inspectionProfiles" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/data" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/doc" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/doc/source" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/other" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/out" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/.pytest_cache" />
+      <excludeFolder url="file://$MODULE_DIR$/doc/build" />
+      <excludeFolder url="file://$MODULE_DIR$/test/.pytest_cache" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (code) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
