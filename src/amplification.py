@@ -124,25 +124,6 @@ class Amplification:
                + eval_E_D0(self.E_U0, self.R) * (1 - self.R) / 2 * self.l1 / (2 * self.l1 + self.l2)
 
 
-class HydrolysisProbes(Amplification):
-    """Specific subclass for hydrolysis probes
-
-    """
-
-    def __init__(self, *args, **kwargs):
-        Amplification.__init__(self, *args, **kwargs)
-
-    def get_E_DX(self, i):
-        return self.get_E_Ui(i)[0, 0] - self.E_U0[0, 0]
-
-    def get_Cov_XiX0(self, i):
-        # see rocketbook `Covariance with initial`
-        return self.V_U0[0, 0] / 2. * (pow(self.l1, i) + pow(self.l2, i))
-
-    def get_V_DX(self, i):
-        return self.get_V_Ui(i)[0, 0] + self.V_U0[0, 0] - 2 * self.get_Cov_XiX0(i)
-
-
 def formula_sympy():
     import sympy as s
     R = s.Symbol("R", positive=True, real=True)
