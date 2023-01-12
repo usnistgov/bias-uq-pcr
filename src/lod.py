@@ -41,6 +41,7 @@ def L_rt1(r: float, R: float, p: float):
         )
     )
 
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
