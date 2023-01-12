@@ -1,4 +1,5 @@
 from get_data import file_to_numpy, conc_dir_to_conc
+import matplotlib.pyplot as plt
 from globals import CYCLE_SYMBOL
 from wells import number_to_well
 import numpy as np
@@ -32,7 +33,6 @@ def find_index(val, group):
 
 
 def main(data):
-    import matplotlib.pyplot as plt
     fig, ax = plt.subplots(figsize=(4.68504, 2.5), ncols=3, sharex=False, sharey=True)
     cycles_to_plot = [1, 20, 40]
     wells_to_plot = (
