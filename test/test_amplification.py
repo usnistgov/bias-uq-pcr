@@ -41,6 +41,14 @@ def test_A():
     assert infty_norm(A@A - cls.get_Atoi(2)) < 1e-14, "A^2 is not correct"
 
 
+def test_A_new():
+    X = 1/np.sqrt(2)*np.array([[R, R], [1, -1]])
+    X_inv = 1/(R*np.sqrt(2))*np.array([[1, R], [1, -R]])
+    L = np.array([[1 + pbar, 0], [0, 1-pbar]])
+    A_new = X@L@X_inv
+    assert infty_norm(A_new - cls.get_A()) < 1e-14, "A is not correct"
+
+
 def test_E_Ui(i=5):
     error = eval_E_Ui_brute_force(i, A, E_U0) - cls.get_E_Ui(i)
     assert infty_norm(error) < 1e-10, "E Ui not correct"
