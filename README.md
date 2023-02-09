@@ -42,6 +42,6 @@ To cite the software or experimental data, use Ref. [2].
 
 ## References
 
-    1. DeJaco, R. F.; Roberts, M. J.; Romsos, E. L.; Vallone, P. M.; Kearsley, A. J. Reducing Bias and Quantifying Uncertainty in Fluorescence Produced by PCR *Under Review*, 2023.
+  1. DeJaco, R. F.; Roberts, M. J.; Romsos, E. L.; Vallone, P. M.; Kearsley, A. J. Reducing Bias and Quantifying Uncertainty in Fluorescence Produced by PCR *Under Review*, 2023.
 
-    2. DeJaco, R. F. Software and Data associated with ``Reducing Bias and Quantifying Uncertainty in Fluorescence Produced by PCR *Under Review* 2023,'' National Institute of Standards and Technology, 2023, https://doi.org/10.18434/mds2-2910
+  2. DeJaco, R. F. Software and Data associated with ``Reducing Bias and Quantifying Uncertainty in Fluorescence Produced by PCR *Under Review* 2023,'' National Institute of Standards and Technology, 2023, https://doi.org/10.18434/mds2-2910
