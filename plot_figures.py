@@ -109,6 +109,7 @@ def plot_figure4(plus: MolarFluorescence, minus: MolarFluorescence):
         axes[i].set_xlim([0., 0.16])
         axes[i].tick_params(which='both', direction='in')
         axes[i].annotate("$%s=%i$" % (CYCLE_SYMBOL, cycles_to_plot[i]), xy=(0.6, 0.04), xycoords='axes fraction')
+
     axes[0].annotate("Inactive", xy=(0.73, 0.55), xycoords='axes fraction',
                    xytext=(0.55, 0.25), textcoords='axes fraction',
                    arrowprops=dict(arrowstyle="->"))
@@ -121,25 +122,17 @@ def plot_figure4(plus: MolarFluorescence, minus: MolarFluorescence):
     fig.savefig(os.path.join(BASE_DIR, 'out', "Fig4.png"), transparent=True, dpi=300)
 
 
-def plot_figure5(f_plus: np.ndarray, f_minus: np.ndarray, C=0.125, Vol=20e-6, R=1.0, pbar=0.9):
+def plot_figure5(model: HydrolysisProbes):
     """
 
     Parameters
     ----------
-    f_plus : np.ndarray
-        molar fluorescences for each cycle/well of active reporter :math:`\\mathbf{f}^+`, n by number of wells matrix
-        Determined in units of fluorescence divided by (pmol/L)
-    f_minus : np.ndarray
-        molar fluorescences for each cycle/well of inactive reporter :math:`\\mathbf{f}^-`, n by number of wells matrix
-        Determined in units of fluorescence divided by (pmol/L)
-    C : float, optional
-        concentration in pmol/L, defaults to 0.125
-    Vol : float, optional
-        volume in L, :math:`\\mathcal{V}`, defaults to 20e-6
-    R : float, optional
-        square root of ratio of probabilities, :math:`R`, defaults to 1.0
-    pbar : float, optional
-        geometric mean of probabilities, :math:`\\bar{p}`, defaults to 0.9
+    model : HydrolysisProbes
+        Contains all of the parameters for calculation of fluorescence curves
+
+    Notes
+    -----
+    The methods :code:`model.E_U0` and :code:`model.V_U0` are updated in place during plotting of each subplot
 
 
     """
@@ -152,14 +145,11 @@ def plot_figure5(f_plus: np.ndarray, f_minus: np.ndarray, C=0.125, Vol=20e-6, R=
 
     fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(4.68504, 3.5), sharex=True, sharey=True)
     for N_0, icol in zip((128, 32, 16, 8), ((0, 0), (0, 1), (1, 0), (1, 1))):
-        cls = HydrolysisProbes(
-            C, Vol, f_plus, f_minus, R, pbar,
-            np.array([[N_0 / 2], [N_0 / 2]]),
-            np.array([[N_0 / 2, 0.], [0., N_0 / 2]])
-        )
-        cls.calculate()
+        model.E_U0 = np.array([[N_0 / 2], [0 / 2]])
+        model.V_U0 = np.array([[N_0 / 2, 0.], [0., N_0 / 2]])
+        model.calculate()
 
-        plot_fluorescence_curve(cls, ax[icol])
+        plot_fluorescence_curve(model, ax[icol])
         ax[icol].annotate("$\\mathbb{E}\\left[N_0\\right]=%i$" % N_0, xy=(0.05, 0.06),
                           xycoords='axes fraction')
 
@@ -175,13 +165,9 @@ def plot_figure5(f_plus: np.ndarray, f_minus: np.ndarray, C=0.125, Vol=20e-6, R=
 
     # plot background inset
     axb = fig.add_axes([0.14, 0.265, 0.19, 0.25])
-    cls = HydrolysisProbes(
-        C, Vol, f_plus, f_minus, R, pbar,
-        np.zeros((2, 1)), np.zeros((2, 2))
-    )
-    axb.plot(cls.cycles, cls.b.max(axis=1), ls='dotted', color="purple")
-    axb.plot(cls.cycles, cls.b.min(axis=1), ls='dotted', color="purple")
-    axb.plot(cls.cycles, cls.b.mean(axis=1), ls='solid', color="purple")
+    axb.plot(model.cycles, model.b.max(axis=1), ls='dotted', color="purple")
+    axb.plot(model.cycles, model.b.min(axis=1), ls='dotted', color="purple")
+    axb.plot(model.cycles, model.b.mean(axis=1), ls='solid', color="purple")
     axb.tick_params(left=True, right=True, top=True,
                     which='both', direction='in', labelleft=False, labelright=True)
     axb.set_xticks([1, 11, 21])
@@ -219,4 +205,26 @@ if __name__ == '__main__':
 
     plot_figure4(Plus, Minus)
 
-    plot_figure5(Plus.f, Minus.f)
+    # Plot figure 5
+    C = 0.125
+    Vol = 20e-6
+    R = 1.0
+    pbar = 0.9
+    model = HydrolysisProbes(
+        C, Vol, Plus.f, Minus.f, R, pbar,
+        np.zeros((2, 1)), np.zeros((2, 2)),
+        Plus.df, Minus.df
+    )
+    plot_figure5(model)
+
+    # write latex table
+    with open(os.path.join(BASE_DIR, "out", "b_d_params.tex"), 'w') as file:
+        for w in range(model.m):
+            for i in model.cycles:
+                file.write("%i & %i & %g & %g & %g & %g \\\\\n" % (i, w, model.b[i - 1, w], model.db[i - 1, w], model.d[i-1, w], model.dd[i - 1, w]))
+            file.write("\\newpage\n")
+    # print max cvs
+    cv_b = model.db/model.b
+    cv_d = model.dd/model.d
+    print("min max mean for cv b is", cv_b.min(), cv_b.max(), cv_b.mean(), cv_b.std(ddof=1))
+    print("min max mean for cv d is", cv_d.min(), cv_d.max(), cv_d.mean(), cv_d.std(ddof=1))

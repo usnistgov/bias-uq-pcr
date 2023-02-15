@@ -18,6 +18,10 @@ class HydrolysisProbes(Amplification):
         array of incremental increases in fluorescences, n by m
     b : np.ndarray
         array of background signals, n by m
+    dd : np.ndarray
+        array of standard deviation in incremental increases in fluorescences, n by m
+    db : np.ndarray
+        array of standard deviation in background signals, n by m
     E_F : np.ndarray
         expected value of fluorescence, n by m, :math:`\\mathbb{E}\\left[\\mathbf{F}\\right]`
     V_F : np.ndarray
@@ -35,6 +39,7 @@ class HydrolysisProbes(Amplification):
     def __init__(self, C: float, Vol: float,
                  f_plus: np.ndarray, f_minus: np.ndarray,
                  R: float, pbar: float, E_U0: np.ndarray, V_U0: np.ndarray,
+                 s_plus: np.ndarray, s_minus: np.ndarray,
                  **kwargs) -> None:
         """
 
@@ -58,13 +63,21 @@ class HydrolysisProbes(Amplification):
             Total concentration of reporters in pmol/L, :math:`C`
         Vol : float
             Total volume of solution in L, :math:`\\mathcal{V}`
+        s_plus : np.ndarray
+            standard deviation in molar fluorescences for each cycle/well of active reporter :math:`\\sigma^+`, n by number of wells matrix
+            Determined in units of fluorescence divided by (pmol/L)
+        s_minus : np.ndarray
+            standard deviation molar fluorescences for each cycle/well of inactive reporter :math:`\\sigma^-`, n by number of wells matrix
+            Determined in units of fluorescence divided by (pmol/L)
         kwargs : dict
             extra kwargs for Amplification class
         """
         Amplification.__init__(self, R, pbar, E_U0, V_U0, **kwargs)
         self.b = f_minus * C
+        self.db = s_minus * C
         Vol = Vol * 1e-12  # Tera Liter (TL). 1 pmol/L = 1 mol / TL
         self.d = (f_plus - f_minus) / Vol / N_av
+        self.dd = np.sqrt(s_plus*s_plus + s_minus*s_minus) / Vol / N_av
 
         n, m = self.b.shape
         assert ((n == self.d.shape[0]) and (m == self.d.shape[1])), "Inconsistent shapes"

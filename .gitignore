@@ -8,3 +8,6 @@ test/.pytest_cache/
 
 # sphinx
 doc/build
+
+# pycharm
+.idea/workspace
