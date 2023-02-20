@@ -1,4 +1,5 @@
 from .amplification import Amplification
+import matplotlib.pyplot as plt
 from .globals import N_av
 import numpy as np
 
@@ -150,7 +151,7 @@ class HydrolysisProbes(Amplification):
             self.V_F[im1, :] = self.d[im1, :] * self.d[im1, :] * self.V_DX[im1]
 
 
-def plot_fluorescence_curve(kls: HydrolysisProbes, ax, well="A1"):
+def plot_fluorescence_curve(kls: HydrolysisProbes, ax: plt.axis, wm1: int):
     """
 
     Parameters
@@ -159,20 +160,17 @@ def plot_fluorescence_curve(kls: HydrolysisProbes, ax, well="A1"):
         Contains all amplification data. Has already computed values
     ax : matplotlib.axes
         axes to plot on
-    well : str
-        name of well to plot
+    wm1 : int
+        well number
 
-    Notes
-    -----
-        *   Plots expected value of flourescence and shades above and below with 3 standard deviations
-        *   Also plots maximum expected value and mininum expected value of all wells in blue dashed lines
 
     """
-    w = well_to_number(well)
 
-    ax.plot(kls.cycles, kls.E_F.max(axis=1), ls='dotted', color="blue")
-    ax.plot(kls.cycles, kls.E_F.min(axis=1), ls='dotted', color="blue")
-
-    s = np.sqrt(kls.V_F[:, w])
-    ax.plot(kls.cycles, kls.E_F[:, w], '-', color='k')
-    ax.fill_between(kls.cycles, kls.E_F[:, w] - 3 * s, kls.E_F[:, w] + 3 * s, color='lightgrey')
+    s = np.sqrt(kls.V_F[:, wm1])
+    ax.plot(kls.cycles, kls.E_F[:, wm1], '-', color='gold', label='$\\kappa = 0$')
+    ax.plot(kls.cycles, kls.E_F[:, wm1] + s, '--', color='C0', label='$\\kappa = 1$')
+    ax.plot(kls.cycles, kls.E_F[:, wm1] - s, '--', color='C0')
+    ax.plot(kls.cycles, kls.E_F[:, wm1] + 2*s, '-.', color='C1', label='$\\kappa = 2$')
+    ax.plot(kls.cycles, kls.E_F[:, wm1] - 2*s, '-.', color='C1')
+    ax.plot(kls.cycles, kls.E_F[:, wm1] + 3*s, ls='dotted', color='tab:red', label='$\\kappa = 3$')
+    ax.plot(kls.cycles, kls.E_F[:, wm1] - 3*s, ls='dotted', color='tab:red')

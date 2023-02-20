@@ -1,4 +1,3 @@
-import os
 import typing
 import numpy as np
 from .get_data import file_to_numpy
@@ -14,6 +13,8 @@ class MolarFluorescence:
     df : np.ndarray
         standard deviation in molar fluorescences :math:`\\sigma`, n by number of wells matrix
         Determined in units of fluorescence divided by (pmol/L)
+    cv : np.ndarray
+        Coefficient of variation in molar fluorescences :math:`\\sigma/\\mathbf{f}`,
     q : int
         number of plates (different concentrations)
     n : int
@@ -48,6 +49,7 @@ class MolarFluorescence:
 
         self.f = np.zeros((self.n, self.m))
         self.df = np.zeros((self.n, self.m))
+        self.cv = np.zeros((self.n, self.m))
         self.name = name
 
     def calculate(self):
@@ -57,3 +59,9 @@ class MolarFluorescence:
                 self.f[i, w] = np.inner(self.F[i, w, :], self.C) / np.inner(self.C, self.C)
                 R = self.F[i, w, :] - self.f[i, w] * self.C
                 self.df[i, w] = np.sqrt(np.inner(R, R) / (self.q - 1))
+                self.cv[i, w] = self.df[i, w] / self.f[i, w]
+    
+    def print_cv(self):
+        """Print information relating to coefficient of variation
+        """
+        print("   CV min: %f max: %f mean: %f std: %f" % (self.cv.min(), self.cv.max(), self.cv.mean(), self.cv.std(ddof=1)))

@@ -1,11 +1,13 @@
 import numpy as np
 import os
 from matplotlib import pyplot as plt
+
+from plot_si_figures import plot_SI_figures
 from src.globals import CYCLE_SYMBOL
 from src.amplification import Amplification
 from src.kinetic_PCR import HydrolysisProbes, plot_fluorescence_curve
 from src.molar_fluorescence import MolarFluorescence
-from src.wells import well_to_number, number_to_well
+from src.wells import number_to_well
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -52,83 +54,81 @@ def plot_figure2(R=0.9, pbar=0.85, max_cycle=4):
     fig.savefig(os.path.join(BASE_DIR, "out", "Fig2.png"), transparent=True, dpi=300)
 
 
-def plot_figure4(plus: MolarFluorescence, minus: MolarFluorescence):
-    """Plot figure 4
+def plot_figure4(cv_plus: np.ndarray, cv_minus: np.ndarray):
+    fig, ax = plt.subplots(figsize=(3.25, 3.25))
+    kwargs = dict(clip_on=False, zorder=100)
 
-    Parameters
-    ----------
-    plus : MolarFluorescence
-        fluorescence data associated with active probe
-    minus : MolarFluorescence
-        fluorescence data associated with inactive probe
+    edges = np.histogram_bin_edges(cv_plus, bins='fd') # Freedman Diaconis Estimator
+    vals, edges = np.histogram(cv_plus, bins=edges)
+    for i in range(1, edges.shape[0]-1):
+        ax.plot([edges[i-1], edges[i], edges[i]], [vals[i-1], vals[i-1], vals[i]], '-', color='C0', **kwargs)
+    i = edges.shape[0] - 2
+    ax.plot([edges[i-1], edges[i]], [vals[i-1], vals[i-1]], '-', color='C0', **kwargs)
 
-    """
-    fig, axes = plt.subplots(figsize=(4.68504, 2.5), ncols=3, sharex=False, sharey=True)
-    cycles_to_plot = [1, 20, 40]
-    wells_to_plot = (
-        'A1', 'C10', 'E5', 'G3', 'H11'
-    )
+    edges = np.histogram_bin_edges(cv_minus, bins='fd') # Freedman Diaconis Estimator
+    vals, edges = np.histogram(cv_minus, bins=edges)
+    for i in range(1, edges.shape[0]-1):
+        ax.plot([edges[i-1], edges[i], edges[i]], [vals[i-1], vals[i-1], vals[i]], ls='dotted', color='C1', **kwargs)
+    i = edges.shape[0] - 2
+    ax.plot([edges[i-1], edges[i]], [vals[i-1], vals[i-1]], ls='dotted', color='C1', **kwargs)
+    ax.annotate("Active, $\\dfrac{\\sigma_{i,w}^{+}}{f_{i,w}^{+}}$", xy=(0.5, 0.8), xycoords="axes fraction", color='C0')
+    ax.annotate("Inactive, $\\dfrac{\\sigma_{i,w}^{-}}{f_{i,w}^{-}}$", xy=(0.5, 0.5), xycoords="axes fraction", color='C1')
+    ax.set_ylabel("Count")
+    ax.set_xlabel("$\\dfrac{\\sigma_{i,w}^{-}}{f_{i,w}^{-}}$ or $\\dfrac{\\sigma_{i,w}^{+}}{f_{i,w}^{+}}$ ")
 
-    for i, ax in zip(
-            list(i - 1 for i in cycles_to_plot),
-            axes
-    ):
-        for w, marker, color in zip(
-                list(map(well_to_number, wells_to_plot)),
-                ['^', 'o', 'v', '*', 'd'],
-                ['C0', 'C1', 'C2', 'C3', 'C4']
-        ):
-            kwargs = dict(color=color, clip_on=False)
-            ax.plot(plus.C, plus.F[i, w], marker, mfc='None', **kwargs)
-            C = np.linspace(0, plus.C.max())
-            ax.fill_between(C, (plus.f[i, w] - 3 * plus.df[i, w]) * C,
-                                (plus.f[i, w] + 3 * plus.df[i, w]) * C,
-                                alpha=0.3, **kwargs)
-            ax.plot(C, plus.f[i, w] * C, '-', label="%s" % number_to_well(w), **kwargs)
-
-            ax.plot(minus.C, minus.F[i, w], marker, mfc='None', **kwargs)
-            C = np.linspace(0, minus.C.max())
-            ax.fill_between(C, (minus.f[i, w] - 3 * minus.df[i, w]) * C,
-                                (minus.f[i, w] + 3 * minus.df[i, w]) * C,
-                                alpha=0.3, **kwargs)
-            ax.plot(C, minus.f[i, w] * C, '-', **kwargs)
-
-    axes[0].legend(loc=(0.01, 0.97), edgecolor="None", facecolor='None', ncol=len(wells_to_plot),
-                 handleheight=1.5, labelspacing=0.3, columnspacing=1.5,  # handlelength=1.
-                 )
-
-    axes[0].set_ylabel("$\\frac{F_{%s,w}}{10^6}$" % CYCLE_SYMBOL,
-                     rotation=0, fontsize=16, labelpad=16)
-    for i in range(3):
-        axes[i].set_xlabel("$C$ [pmol/L]")
-        axes[i].spines['top'].set_visible(False)
-        axes[i].spines['right'].set_visible(False)
-        axes[i].set_ylim([0., 1.6])
-        axes[i].set_yticks([0., 0.4, 0.8, 1.2, 1.6])
-        axes[i].set_xticks([0., 0.08, 0.16])
-        axes[i].set_xlim([0., 0.16])
-        axes[i].tick_params(which='both', direction='in')
-        axes[i].annotate("$%s=%i$" % (CYCLE_SYMBOL, cycles_to_plot[i]), xy=(0.6, 0.04), xycoords='axes fraction')
-
-    axes[0].annotate("Inactive", xy=(0.73, 0.55), xycoords='axes fraction',
-                   xytext=(0.55, 0.25), textcoords='axes fraction',
-                   arrowprops=dict(arrowstyle="->"))
-    axes[0].annotate("Active", xy=(0.3, 0.85), xycoords='axes fraction',
-                   xytext=(0.05, 0.95), textcoords='axes fraction',
-                   arrowprops=dict(arrowstyle="-[", connectionstyle="angle"))
-    axes[1].set_xticklabels(["", "0.08", "0.16"])
-    axes[2].set_xticklabels(["", "0.08", "0.16"])
-    fig.subplots_adjust(left=0.14, right=0.96, top=0.94, bottom=0.16, wspace=0.04)
-    fig.savefig(os.path.join(BASE_DIR, 'out', "Fig4.png"), transparent=True, dpi=300)
+    fig.subplots_adjust(left=0.18, bottom=0.22, top=0.98, right=0.99)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.set_yticks([0., 50., 100, 150, 200, 250, 300])
+    ax.set_ylim([0., 300.])
+    fig.savefig(os.path.join(BASE_DIR, "out", "Fig4.png"), transparent=True, dpi=300)
 
 
 def plot_figure5(model: HydrolysisProbes):
+    # plot background signals and such
+    fig, axes = plt.subplots(figsize=(4.68504, 4.5), nrows=2, sharex=True, sharey=False)
+    for w, color in [(0, 'C0'), (13, "C1"), (26, "C2"), (39, "C3"),
+                     (52, "C4"), (65, "C5"), (78, "C6"), (91, "C7")]:
+        bscale = 1.
+        axes[0].plot(model.cycles, model.b[:, w] / bscale,
+                     color=color, label=number_to_well(w))
+        axes[0].fill_between(model.cycles,
+                             (model.b[:, w] - 2 * model.db[:, w]) / bscale,
+                             (model.b[:, w] + 2 * model.db[:, w]) / bscale,
+                             alpha=0.3, color=color)
+        dscale = 1e-6
+        axes[1].plot(model.cycles, model.d[:, w] / dscale, color=color)
+        axes[1].fill_between(model.cycles,
+                             (model.d[:, w] - 2 * model.dd[:, w]) / dscale,
+                             (model.d[:, w] + 2 * model.dd[:, w]) / dscale,
+                             alpha=0.3, color=color)
+    axes[0].legend(loc=(0.05, -0.25), ncol=4, edgecolor='None', facecolor='None')
+
+    axes[0].set_ylabel("$b_{i,w}$", rotation=0, labelpad=14)
+    axes[1].set_ylabel("$\\dfrac{d_{i,w}}{10^6}$", rotation=0, labelpad=14)
+    axes[1].set_xlabel("Cycle, $i$")
+    fig.subplots_adjust(left=0.15, right=0.98, top=0.99)
+    for ax in (axes[0], axes[1]):
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.set_xticks([5, 10, 15, 20, 25, 30, 35, 40, 45])
+        ax.set_xlim([1., 45])
+        ax.set_xticks([1, 2, 3, 4, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19,
+                       21, 22, 23, 24, 26, 27, 28, 29, 31, 32, 33, 34, 36, 37, 38, 39,
+                       41, 42, 43, 44], minor=True)
+        ax.tick_params(axis="x", direction='in', which='both')
+    fig.savefig(os.path.join(BASE_DIR, "out", "Fig5.png"), transparent=True, dpi=300)
+
+
+def plot_figure6(model: HydrolysisProbes, wm1: int):
     """
 
     Parameters
     ----------
     model : HydrolysisProbes
         Contains all of the parameters for calculation of fluorescence curves
+    wm1 : int
+        well number (0 to 95)
 
     Notes
     -----
@@ -144,43 +144,32 @@ def plot_figure5(model: HydrolysisProbes):
         ax.set_xlim([1, 26])
 
     fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(4.68504, 3.5), sharex=True, sharey=True)
-    for N_0, icol in zip((128, 32, 16, 8), ((0, 0), (0, 1), (1, 0), (1, 1))):
-        model.E_U0 = np.array([[N_0 / 2], [0 / 2]])
-        model.V_U0 = np.array([[N_0 / 2, 0.], [0., N_0 / 2]])
+    for I, icol in zip((64, 16, 8, 4), ((0, 0), (0, 1), (1, 0), (1, 1))):
+        model.E_U0 = np.ones((2, 1))*I
+        model.V_U0 = np.eye(2)*I
         model.calculate()
 
-        plot_fluorescence_curve(model, ax[icol])
-        ax[icol].annotate("$\\mathbb{E}\\left[N_0\\right]=%i$" % N_0, xy=(0.05, 0.06),
+        plot_fluorescence_curve(model, ax[icol], wm1)
+        ax[icol].annotate("$\\mathbb{E}\\left[I\\right]=%i$" % I, xy=(0.05, 0.06),
                           xycoords='axes fraction')
 
     for icol in ((0, 0), (0, 1), (1, 0), (1, 1)):
         fmt_ax(ax[icol])
         if icol[1] == 0:
             ax[icol].set_ylabel(
-                r"$\mathbb{E}\left[F_{%s,w}\right] \pm 3\sqrt{\mathsf{Var}\left[F_{%s,w}\right]}$"
-                % (CYCLE_SYMBOL, CYCLE_SYMBOL)
+                r"$\mathbb{E}\left[F_{%s,%i}\right] \pm \kappa\sqrt{\mathsf{Var}\left[F_{%s,%i}\right]}$"
+                % (CYCLE_SYMBOL, wm1 + 1, CYCLE_SYMBOL, wm1 + 1)
             )
+            if icol[0] == 0:
+                ax[icol].legend(edgecolor='None', facecolor='None')
         if icol[0] == 1:
             ax[icol].set_xlabel("Cycle, $%s$" % CYCLE_SYMBOL)
 
-    # plot background inset
-    axb = fig.add_axes([0.14, 0.265, 0.19, 0.25])
-    axb.plot(model.cycles, model.b.max(axis=1), ls='dotted', color="purple")
-    axb.plot(model.cycles, model.b.min(axis=1), ls='dotted', color="purple")
-    axb.plot(model.cycles, model.b.mean(axis=1), ls='solid', color="purple")
-    axb.tick_params(left=True, right=True, top=True,
-                    which='both', direction='in', labelleft=False, labelright=True)
-    axb.set_xticks([1, 11, 21])
-    axb.set_xticks([6, 16], minor=True)
-    axb.set_xlim([1, 16])
-    axb.set_ylim([0.625, 1.25])
-    axb.set_yticks([0.8, 1.0, 1.2])
-
     fig.subplots_adjust(right=0.98, top=0.98, left=0.12, hspace=0.0, wspace=0.09, bottom=0.11)
-    fig.savefig(os.path.join(BASE_DIR, "out", "Fig5.png"), transparent=True, dpi=300)
+    fig.savefig(os.path.join(BASE_DIR, "out", "Fig6.png"), transparent=True, dpi=300)
 
 
-if __name__ == '__main__':
+def main():
     plot_figure2()
     Plus = MolarFluorescence(
         np.array([0.01, 0.02, 0.04, 0.07]),
@@ -203,9 +192,9 @@ if __name__ == '__main__':
     Plus.calculate()
     Minus.calculate()
 
-    plot_figure4(Plus, Minus)
+    # Plot another figure
+    plot_figure4(Plus.cv, Minus.cv)
 
-    # Plot figure 5
     C = 0.125
     Vol = 20e-6
     R = 1.0
@@ -215,16 +204,13 @@ if __name__ == '__main__':
         np.zeros((2, 1)), np.zeros((2, 2)),
         Plus.df, Minus.df
     )
+
     plot_figure5(model)
 
-    # write latex table
-    with open(os.path.join(BASE_DIR, "out", "b_d_params.tex"), 'w') as file:
-        for w in range(model.m):
-            for i in model.cycles:
-                file.write("%i & %i & %g & %g & %g & %g \\\\\n" % (i, w, model.b[i - 1, w], model.db[i - 1, w], model.d[i-1, w], model.dd[i - 1, w]))
-            file.write("\\newpage\n")
-    # print max cvs
-    cv_b = model.db/model.b
-    cv_d = model.dd/model.d
-    print("min max mean for cv b is", cv_b.min(), cv_b.max(), cv_b.mean(), cv_b.std(ddof=1))
-    print("min max mean for cv d is", cv_d.min(), cv_d.max(), cv_d.mean(), cv_d.std(ddof=1))
+    plot_figure6(model, 0)
+
+    plot_SI_figures(Plus, Minus)
+
+
+if __name__ == '__main__':
+    main()
