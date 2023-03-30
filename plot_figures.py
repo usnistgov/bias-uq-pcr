@@ -35,13 +35,13 @@ def plot_figure2(R=0.9, pbar=0.85, max_cycle=4):
 
     fig, ax = plt.subplots(figsize=(3.25, 3.25))
 
-    for (EX0, EY0, label, marker) in [
-        (10, 10, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \left(5, 5\right)^\top$", 'x'),
-        (10, 0, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \left(10, 0\right)^\top$", 'o'),
-        (0, 10, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \left(0, 10\right)^\top$", 'd')
+    for (EX0, EY0, label, marker, ls) in [
+        (10, 10, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \begin{pmatrix}5\\5\end{pmatrix}$", 'x', '-'),
+        (10, 0, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \begin{pmatrix}10\\0\end{pmatrix}$", 'o', '--'),
+        (0, 10, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \begin{pmatrix}0 \\ 10\end{pmatrix}$", 'd', '-.')
     ]:
         cls = Amplification(R, pbar, np.array([EX0, EY0]), np.random.random((2, 2)))
-        ax.plot(cycles, cls.get_EXi_over_EYi(cycles), marker, label=label, mfc='None', ls='-')
+        ax.plot(cycles, cls.get_EXi_over_EYi(cycles), marker, label=label, mfc='None', ls=ls)
 
     ax.legend(loc=(0.3, 0.3), edgecolor='None', facecolor='None')
     ax.set_xlabel("Cycle, $%s$" % CYCLE_SYMBOL)
