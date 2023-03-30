@@ -229,7 +229,7 @@ def main():
 
     plot_figure6(model, 12)
 
-    # plot_SI_figures(Plus, Minus)
+    plot_SI_figures(Plus, Minus)
 
 
 if __name__ == '__main__':

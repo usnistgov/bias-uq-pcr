@@ -21,8 +21,8 @@ sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
 project = 'Bias-UQ-PCR'
 copyright = '2023, Robert F. DeJaco'
 author = 'Robert F. DeJaco'
-version = "0.0"  # the short version
-release = 'v0.0.1'  # full version number
+version = "0.9"  # the short version
+release = 'v0.9.0'  # full version number
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -58,7 +58,7 @@ master_doc = 'index'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 
 # The name of the Pygments (syntax highlighting) style to use.
