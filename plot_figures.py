@@ -56,7 +56,7 @@ def plot_figure2(R=0.9, pbar=0.85, max_cycle=4):
     ax.spines['top'].set_visible(False)
     fig.subplots_adjust(left=0.3, top=0.97, bottom=0.14, right=0.97)
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    fig.savefig(os.path.join(BASE_DIR, "out", "Fig2.png"), transparent=True, dpi=300)
+    fig.savefig(os.path.join(BASE_DIR, "out", "Fig2.pdf"), transparent=True, dpi=300)
 
 
 def plot_figure4(cv_plus: np.ndarray, cv_minus: np.ndarray):
@@ -100,7 +100,7 @@ def plot_figure4(cv_plus: np.ndarray, cv_minus: np.ndarray):
     cycle_outliers, well_outliers = np.where(cv_minus > 0.022)
     assert set(well_outliers) == set((1,)), "Incorrect"
     # print(len(cycle_outliers)) 45 total cycles
-    fig.savefig(os.path.join(BASE_DIR, "out", "Fig4.png"), transparent=True, dpi=300)
+    fig.savefig(os.path.join(BASE_DIR, "out", "Fig4.pdf"), transparent=True, dpi=300)
 
 
 def plot_figure5(model: HydrolysisProbes):
@@ -136,7 +136,7 @@ def plot_figure5(model: HydrolysisProbes):
                        41, 42, 43, 44], minor=True)
         ax.tick_params(axis="x", direction='in', which='both')
     fig.subplots_adjust(left=0.22, right=0.98, top=0.99)
-    fig.savefig(os.path.join(BASE_DIR, "out", "Fig5.png"), transparent=True, dpi=300)
+    fig.savefig(os.path.join(BASE_DIR, "out", "Fig5.pdf"), transparent=True, dpi=300)
 
 
 def plot_figure6(model: HydrolysisProbes, wm1: int):
@@ -186,7 +186,7 @@ def plot_figure6(model: HydrolysisProbes, wm1: int):
             ax[icol].set_xlabel("Cycle, $%s$" % CYCLE_SYMBOL)
 
     fig.subplots_adjust(right=0.98, top=0.98, left=0.12, hspace=0.0, wspace=0.09, bottom=0.11)
-    fig.savefig(os.path.join(BASE_DIR, "out", "Fig6.png"), transparent=True, dpi=300)
+    fig.savefig(os.path.join(BASE_DIR, "out", "Fig6.pdf"), transparent=True, dpi=300)
 
 
 def main():
