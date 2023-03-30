@@ -16,6 +16,7 @@ Welcome to Bias-UQ-PCR's documentation!
    molar_fluorescence.rst
    kinetic_PCR.rst
    plot_figures.rst
+   lod.rst
 
 
 Indices and tables

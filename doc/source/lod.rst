@@ -1,5 +1,5 @@
-Plotting Figures
-================
+Limit of Detection
+==================
 
-.. automodule:: plot_figures
+.. automodule:: src.lod
   :members:

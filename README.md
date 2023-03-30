@@ -16,7 +16,7 @@ pip install -r requirements.txt
 
 To test the installation, navigate to the parent directory and invoke
 ```bash
-python3 -m pytest test/*
+python3 -m pytest --doctest-modules
 ```
 
 For step-by-step instructions on reproducing the manuscript, run

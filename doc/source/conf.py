@@ -22,7 +22,7 @@ project = 'Bias-UQ-PCR'
 copyright = '2023, Robert F. DeJaco'
 author = 'Robert F. DeJaco'
 version = "0.9"  # the short version
-release = 'v0.9.0'  # full version number
+release = 'v0.9.1'  # full version number
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
