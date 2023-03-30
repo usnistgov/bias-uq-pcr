@@ -1,4 +1,4 @@
-from src.amplification import eval_R, Amplification, eval_E_S0, eval_E_D0, get_pfr_prf
+from src.amplification import eval_R, Amplification, get_pfr_prf
 import numpy as np
 
 
@@ -14,8 +14,7 @@ def eval_V_Ui_brute_force(
         K1: np.ndarray, K2: np.ndarray,
         p: float, R: float
 ) -> np.ndarray:
-    E_S0, E_D0 = eval_E_S0(E_U0, R), eval_E_D0(E_U0, R)
-    V_Binomials = p * (E_S0 * pow(1 + p, i - 1) * K1 + E_D0 * pow(1 - p, i - 1) * K2)
+    V_Binomials = pow(1 + p, i-1)*K1 + pow(1 - p, i - 1)*K2
     if i == 1:
         return A @ V_U0 @ A.T + V_Binomials
 
@@ -25,7 +24,7 @@ def eval_V_Ui_brute_force(
 p_fr, p_rf = 0.87, 0.92
 R = eval_R(p_fr, p_rf)
 pbar = np.sqrt(p_fr * p_rf)
-E_U0 = np.array([[3], [4]])
+E_U0 = np.array([3, 4])
 V_U0 = np.array([[3, 0], [0, 4]])
 cls = Amplification(R, pbar, E_U0, V_U0)
 A = np.array([[1, p_rf], [p_fr, 1]])
@@ -60,12 +59,6 @@ def test_V_Ui(i=5):
     assert infty_norm(error) < 1e-10, "V Ui not correct"
 
 
-def test_nu():
-    E_S0 = eval_E_S0(E_U0, R)
-    error = cls.get_nu()/E_S0/E_S0 - cls.get_V_Ui(40)/cls.get_E_Ui(40)/cls.get_E_Ui(40)
-    assert infty_norm(error) < 0.01, "nu not correct"
-
-
 def test_EXi_over_EYi():
     R = 0.9
     pbar = 0.85
@@ -77,11 +70,10 @@ def test_EXi_over_EYi():
     for (EX0, EY0) in [(10, 10), (10, 0), (0, 10)]:
         a = EX0 + R*EY0
         b = EX0 - R*EY0
-        kls = Amplification(R, pbar, np.array([[EX0], [EY0]]), np.random.random((2, 2)))
+        kls = Amplification(R, pbar, np.array([EX0, EY0]), np.random.random((2, 2)))
         EXi = a/2*l1**i + b/2*l2**i
         EYi = a/2/R*l1**i - b/2/R*l2**i
         val1 = EXi/EYi
         val2 = kls.get_EXi_over_EYi(i)
         error = val1 - val2
         assert infty_norm(error[np.isfinite(error)]) < 1e-10, "EXi/EYi not correct!"
-

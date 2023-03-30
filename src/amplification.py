@@ -43,44 +43,6 @@ def get_pfr_prf(R: float, pbar: float):
     return p_fr, p_rf
 
 
-def eval_E_S0(E_U0: np.ndarray, R: float):
-    """Calculates :math:`\\mathbb{E}\\left[S_0\\right]` from :math:`\\mathbb{E}\\left[\\mathbf{U}_0\\right]` and :math:`R`
-
-    Parameters
-    ----------
-    E_U0 : np.ndarray
-        Initial expected value vector
-    R : float
-        square root of ratio of amplification probabilities
-
-    Returns
-    -------
-    float
-        :math:`\\mathbb{E}\\left[S_0\\right] := \\mathbb{E}\\left[X_i + RY_i\\right]`
-
-    """
-    return E_U0[0, 0] + R * E_U0[1, 0]
-
-
-def eval_E_D0(E_U0: np.ndarray, R: float):
-    """Calculates :math:`\\mathbb{E}\\left[D_0\\right]` from :math:`\\mathbb{E}\\left[\\mathbf{U}_0\\right]` and :math:`R`
-
-    Parameters
-    ----------
-    E_U0 : np.ndarray
-        Initial expected value vector
-    R : float
-        square root of ratio of amplification probabilities
-
-    Returns
-    -------
-    float
-        :math:`\\mathbb{E}\\left[D_0\\right] := \\mathbb{E}\\left[X_i - RY_i\\right]`
-
-    """
-    return E_U0[0, 0] - R * E_U0[1, 0]
-
-
 class Amplification:
     """
     Parameters
@@ -89,21 +51,21 @@ class Amplification:
         Largest eigenvalue of :math:`\\mathbf{A}`, :math:`\\lambda_1`
     l2 : float
         Smallest eigenvalue of :math:`\\mathbf{A}`, :math:`\\lambda_2`
-    x1 : np.ndarray
+    x1 : np.array
         Right eigenvector of :math:`\\mathbf{A}` corresponding to :math:`\\lambda_1`, :math:`\\mathbf{x}_1`
-    x2 : np.ndarray
+    x2 : np.array
         Right eigenvector of :math:`\\mathbf{A}` corresponding to :math:`\\lambda_2`, :math:`\\mathbf{x}_2`
-    z1 : np.ndarray
+    z1 : np.array
         Left eigenvector of :math:`\\mathbf{A}` corresponding to :math:`\\lambda_1`, :math:`\\mathbf{z}_1`
-    z2 : np.ndarray
+    z2 : np.array
         Left eigenvector of :math:`\\mathbf{A}` corresponding to :math:`\\lambda_2`, :math:`\\mathbf{z}_2`
     K1 : np.ndarray
-        Matrix :math:`\\mathbf{K}_1` defined in text to calculate variance
+        Matrix :math:`\\mathbf{K}_1` defined in (25)
     K2 : np.ndarray
-        Matrix :math:`\\mathbf{K}_2` defined in text to calculate variance
+        Matrix :math:`\\mathbf{K}_2` defined in (25)
     """
-    def __init__(self, R: float, pbar: float, E_U0: np.ndarray, V_U0: np.ndarray,
-                 farray=np.array, sqrt2=np.sqrt(2)) -> None:
+
+    def __init__(self, R: float, pbar: float, E_U0: np.array, V_U0: np.ndarray):
         """
 
         Parameters
@@ -112,37 +74,53 @@ class Amplification:
             ratio of amplification probabilities, :math:`R`
         pbar : float
             geometric mean of amplification probabilities, :math:`\\bar{p}`
-        E_U0 : np.ndarray
+        E_U0 : np.array
             initial expected values of both strands :math:`\\mathbb{E}\\left[\\mathbf{U}_0\\right]`, 2 by 1 matrix
         V_U0 : np.ndarray
             initial variances of both strands :math:`\\mathsf{Var}\\left[\\mathbf{U}_0\\right]`, 2 by 2 matrix
-        farray : callable, optional
-            function to convert to array type, defaults to np.array
-        sqrt2
-            square root of 2, defaults to float calculated by np.sqrt(2)
+
         """
         self.R = R
         self.pbar = pbar
-        self.E_U0 = E_U0
+        self.E_U0 = E_U0.reshape((2,))
         self.V_U0 = V_U0
 
-        self.x1 = farray([[R], [1]]) / sqrt2
-        self.x2 = farray([[R], [-1]]) / sqrt2
-        self.z1 = farray([[1 / R], [1]]) / sqrt2
-        self.z2 = farray([[1 / R], [-1]]) / sqrt2
+        self.X = np.array([[R, R], [1, -1]]) / np.sqrt(2)
+        self.Z = np.array([[1, R], [1, -R]]) / R / np.sqrt(2)
+        self.x1 = self.X[:, 0]
+        self.x2 = self.X[:, 1]
+        self.z1 = self.Z[0, :].T
+        self.z2 = self.Z[1, :].T
         self.l1 = 1 + pbar
         self.l2 = 1 - pbar
+        self.lamda = np.array([[self.l1, 0], [0, self.l2]])
+        self.e1 = np.array([1, 0])
+        self.e2 = np.array([0, 1])
+        self.initialize()
 
-        self.K1 = 1 / 2 * farray([
-            [1 - R * pbar, 0],
-            [0, 1 / R - pbar / R / R]
-        ]
-        )
-        self.K2 = 1 / 2 * farray([
-            [-1 + R * pbar, 0],
-            [0, 1 / R - pbar / R / R]
-        ]
-        )
+    def initialize(self):
+        """Initialize :math:`\\mathbf{K}_\\ell` via (25), :math:`\\nu_{j,k}` via (28a),
+        and :math:`\\eta_{j,k}^\\ell` via (28b).
+
+
+        """
+        self.K1 = np.inner(self.z1, self.E_U0) * np.array([
+            [self.pbar * self.R * (1 - self.pbar*self.R) * np.inner(self.e2, self.x1), 0],
+            [0, self.pbar/ self.R * (1 - self.pbar/self.R) * np.inner(self.e1, self.x1)]
+        ])
+        self.K2 = np.inner(self.z2, self.E_U0) * np.array([
+            [self.pbar*self.R* (1 - self.pbar*self.R) * np.inner(self.e2, self.x2), 0],
+            [0, self.pbar/ self.R * (1 - self.pbar/ self.R) * np.inner(self.e1, self.x2)]
+        ])
+        self.eta_jkl = np.zeros((2, 2, 2))
+        self.nu_jk = np.zeros((2, 2))
+        for j in range(2):
+            for k in range(2):
+                self.nu_jk[j, k] = np.inner(self.Z[j, :], self.V_U0 @ self.Z[k, :])
+                self.eta_jkl[j, k, 0] = np.inner(self.Z[j, :], self.K1 @ self.Z[k, :]) / (
+                            self.lamda[j, j] * self.lamda[k, k] - self.l1)
+                self.eta_jkl[j, k, 1] = np.inner(self.Z[j, :], self.K2 @ self.Z[k, :]) / (
+                            self.lamda[j, j] * self.lamda[k, k] - self.l2)
 
     def get_A(self) -> np.ndarray:
         """
@@ -150,10 +128,10 @@ class Amplification:
         Returns
         -------
         np.ndarray
-            matrix :math:`\\mathbf{A}` calculated by decomposition (10)
+            matrix :math:`\\mathbf{A}` calculated by decomposition (13)
 
         """
-        return self.l1 * self.x1 @ self.z1.T + self.l2 * self.x2 @ self.z2.T
+        return self.l1 * np.outer(self.x1, self.z1) + self.l2 * np.outer(self.x2, self.z2)
 
     def get_Atoi(self, i: int) -> np.ndarray:
         """
@@ -166,12 +144,12 @@ class Amplification:
         Returns
         -------
         np.ndarray
-            matrix :math:`\\mathbf{A}^i` calculated by decomposition (10)
+            matrix :math:`\\mathbf{A}^i` calculated by decomposition (15)
 
         """
-        return pow(self.l1, i) * self.x1 @ self.z1.T + pow(self.l2, i) * self.x2 @ self.z2.T
+        return pow(self.l1, i) * np.outer(self.x1, self.z1) + pow(self.l2, i) * np.outer(self.x2, self.z2)
 
-    def get_E_Ui(self, i: int) -> np.ndarray:
+    def get_E_Ui(self, i: int) -> np.array:
         """
 
         Parameters
@@ -181,39 +159,11 @@ class Amplification:
 
         Returns
         -------
-        np.ndarray
+        np.array
             matrix :math:`\\mathbb{E}\\left[\\mathbf{U}_i\\right]=\\mathbf{A}^i\\mathbb{E}\\left[\\mathbf{U}_0\\right]`
 
         """
         return self.get_Atoi(i) @ self.E_U0
-
-    def get_x1z1TK1z1x1T(self) -> np.ndarray:
-        """
-
-        Returns
-        -------
-        np.ndarray
-            computes :math:`\\mathbf{x}_1\\mathbf{z}_1^\\top\\mathbf{K}_1\\mathbf{z}_1\\mathbf{x}_1^\\top`
-
-        """
-        return self.l2 * (self.R + 1) / 8 * np.array([
-            [1, 1 / self.R],
-            [1 / self.R, 1 / self.R / self.R]
-        ])
-
-    def get_x1z1TK2z1x1T(self):
-        """
-
-        Returns
-        -------
-        np.ndarray
-            computes :math:`\\mathbf{x}_1\\mathbf{z}_1^\\top\\mathbf{K}_2\\mathbf{z}_1\\mathbf{x}_1^\\top`
-
-        """
-        return self.l1 * (self.R - 1) / 8 * np.array([
-            [1, 1 / self.R],
-            [1 / self.R, 1 / self.R / self.R]
-        ])
 
     def get_V_Ui(self, i: int) -> np.ndarray:
         """
@@ -226,37 +176,20 @@ class Amplification:
         Returns
         -------
         np.ndarray
-            complicated expression to calculate :math:`\\mathsf{Var}\\left[\\mathbf{U}_i\\right]`
+            :math:`\\mathsf{Var}\\left[\\mathbf{U}_i\\right]` obtained by Equation (27)
 
         """
-        E_S0, E_D0 = eval_E_S0(self.E_U0, self.R), eval_E_D0(self.E_U0, self.R)
-        return self.get_Atoi(i) @ self.V_U0 @ (self.get_Atoi(i).T) \
-               + self.pbar * E_S0 * (
-                       (pow(self.l1 * self.l1, i) - pow(self.l1, i)) / (
-                           self.l1 * self.l1 - self.l1) * self.x1 @ self.z1.T @ self.K1 @ self.z1 @ self.x1.T
-                       +
-                       (pow(self.l1 * self.l2, i) - pow(self.l1, i)) / (
-                                   self.l1 * self.l2 - self.l1) * self.x1 @ self.z1.T @ self.K1 @ self.z2 @ self.x2.T
-                       +
-                       (pow(self.l1 * self.l2, i) - pow(self.l1, i)) / (
-                                   self.l1 * self.l2 - self.l1) * self.x2 @ self.z2.T @ self.K1 @ self.z1 @ self.x1.T
-                       +
-                       (pow(self.l2 * self.l2, i) - pow(self.l1, i)) / (
-                                   self.l2 * self.l2 - self.l1) * self.x2 @ self.z2.T @ self.K1 @ self.z2 @ self.x2.T
-               ) \
-               + self.pbar * E_D0 * (
-                       (pow(self.l1 * self.l1, i) - pow(self.l2, i)) / (
-                           self.l1 * self.l1 - self.l2) * self.x1 @ self.z1.T @ self.K2 @ self.z1 @ self.x1.T
-                       +
-                       (pow(self.l1 * self.l2, i) - pow(self.l2, i)) / (
-                                   self.l1 * self.l2 - self.l2) * self.x1 @ self.z1.T @ self.K2 @ self.z2 @ self.x2.T
-                       +
-                       (pow(self.l1 * self.l2, i) - pow(self.l2, i)) / (
-                                   self.l1 * self.l2 - self.l2) * self.x2 @ self.z2.T @ self.K2 @ self.z1 @ self.x1.T
-                       +
-                       (pow(self.l2 * self.l2, i) - pow(self.l2, i)) / (
-                                   self.l2 * self.l2 - self.l2) * self.x2 @ self.z2.T @ self.K2 @ self.z2 @ self.x2.T
-               )
+        def prefactor(j: int, k: int):
+            return (
+                    (self.nu_jk[j, k] + self.eta_jkl[j, k, 0] + self.eta_jkl[j, k, 1]
+                    ) * pow(self.lamda[j, j] * self.lamda[k, k], i)
+                    - self.eta_jkl[j, k, 0] * pow(self.l1, i)
+                    - self.eta_jkl[j, k, 1] * pow(self.l2, i)
+            )
+
+        return sum(
+            prefactor(j, k) * np.outer(self.X[:, j], self.X[:, k]) for j in range(2) for k in range(2)
+        )
 
     def get_EXi_over_EYi(self, cycles: np.array) -> np.array:
         r"""Calculate :math:`\mathbb{E}\left[X_i\right]/\mathbb{E}\left[Y_i\right]` for a variety of cycles :math:`i`
@@ -274,18 +207,8 @@ class Amplification:
         EXi_over_EYi = np.zeros(cycles.shape[0])
         for i in range(cycles.shape[0]):
             EUi = self.get_E_Ui(i)
-            EXi_over_EYi[i] = EUi[0, 0] / EUi[1, 0]
+            if EUi[1] > 0:
+                EXi_over_EYi[i] = EUi[0] / EUi[1]
+            else:
+                EXi_over_EYi[i] = np.inf
         return EXi_over_EYi
-
-    def get_nu(self):
-        """
-
-        Returns
-        -------
-        float
-            Computes :math:`\\nu`, see Equation (22).
-
-        """
-        return self.V_U0[0, 0] + self.R * self.V_U0[1, 0] + self.R * self.V_U0[0, 1] + self.R * self.R * self.V_U0[1, 1] \
-               + eval_E_S0(self.E_U0, self.R) * (1 + self.R) / 2 * self.l2 / self.l1 \
-               + eval_E_D0(self.E_U0, self.R) * (1 - self.R) / 2 * self.l1 / (2 * self.l1 + self.l2)

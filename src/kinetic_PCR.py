@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from .globals import N_av
 import numpy as np
 
-from .wells import well_to_number
-
 
 class HydrolysisProbes(Amplification):
     """Specific subclass for hydrolysis probes
@@ -39,7 +37,7 @@ class HydrolysisProbes(Amplification):
 
     def __init__(self, C: float, Vol: float,
                  f_plus: np.ndarray, f_minus: np.ndarray,
-                 R: float, pbar: float, E_U0: np.ndarray, V_U0: np.ndarray,
+                 R: float, pbar: float, E_U0: np.array, V_U0: np.ndarray,
                  s_plus: np.ndarray, s_minus: np.ndarray,
                  **kwargs) -> None:
         """
@@ -50,8 +48,8 @@ class HydrolysisProbes(Amplification):
             ratio of amplification probabilities, :math:`R`
         pbar : float
             geometric mean of amplification probabilities, :math:`\\bar{p}`
-        E_U0 : np.ndarray
-            initial expected values of both strands :math:`\\mathbb{E}\\left[\\mathbf{U}_0\\right]`, 2 by 1 matrix
+        E_U0 : np.array
+            initial expected values of both strands :math:`\\mathbb{E}\\left[\\mathbf{U}_0\\right]`, 2 array
         V_U0 : np.ndarray
             initial variances of both strands :math:`\\mathsf{Var}\\left[\\mathbf{U}_0\\right]`, 2 by 2 matrix
         f_plus : np.ndarray
@@ -73,7 +71,7 @@ class HydrolysisProbes(Amplification):
         kwargs : dict
             extra kwargs for Amplification class
         """
-        Amplification.__init__(self, R, pbar, E_U0, V_U0, **kwargs)
+        Amplification.__init__(self, R, pbar, E_U0, V_U0)
         self.b = f_minus * C
         self.db = s_minus * C
         Vol = Vol * 1e-12  # Tera Liter (TL). 1 pmol/L = 1 mol / TL
@@ -104,7 +102,7 @@ class HydrolysisProbes(Amplification):
             :math:`\\mathbb{E}\\left[\\Delta X_i\\right]`
 
         """
-        return self.get_E_Ui(i)[0, 0] - self.E_U0[0, 0]
+        return self.get_E_Ui(i)[0] - self.E_U0[0]
 
     def get_Cov_XiX0(self, i):
         """
@@ -117,10 +115,9 @@ class HydrolysisProbes(Amplification):
         Returns
         -------
         float
-            :math:`\\mathsf{Cov}\\left[X_i, X_0\\right]`
+            :math:`\\mathsf{Cov}\\left[X_i, X_0\\right]`, see (43)
 
         """
-        # see rocketbook `Covariance with initial`
         return self.V_U0[0, 0] / 2. * (pow(self.l1, i) + pow(self.l2, i))
 
     def get_V_DX(self, i):
@@ -167,10 +164,12 @@ def plot_fluorescence_curve(kls: HydrolysisProbes, ax: plt.axis, wm1: int):
     """
 
     s = np.sqrt(kls.V_F[:, wm1])
-    ax.plot(kls.cycles, kls.E_F[:, wm1], '-', color='gold', label='$\\kappa = 0$')
-    ax.plot(kls.cycles, kls.E_F[:, wm1] + s, '--', color='C0', label='$\\kappa = 1$')
-    ax.plot(kls.cycles, kls.E_F[:, wm1] - s, '--', color='C0')
-    ax.plot(kls.cycles, kls.E_F[:, wm1] + 2*s, '-.', color='C1', label='$\\kappa = 2$')
-    ax.plot(kls.cycles, kls.E_F[:, wm1] - 2*s, '-.', color='C1')
-    ax.plot(kls.cycles, kls.E_F[:, wm1] + 3*s, ls='dotted', color='tab:red', label='$\\kappa = 3$')
-    ax.plot(kls.cycles, kls.E_F[:, wm1] - 3*s, ls='dotted', color='tab:red')
+    kwargs = dict(lw=1)
+    ax.plot(kls.cycles, kls.E_F[:, wm1], '-', color='magenta', label='$\\kappa = 0$', **kwargs)
+    ax.plot(kls.cycles, kls.E_F[:, wm1] + s, '--', color='C0', label='$\\kappa = 1$', **kwargs)
+    ax.plot(kls.cycles, kls.E_F[:, wm1] - s, '--', color='C0', **kwargs)
+    ax.plot(kls.cycles, kls.E_F[:, wm1] + 2*s, '-.', color='C1', label='$\\kappa = 2$', **kwargs)
+    ax.plot(kls.cycles, kls.E_F[:, wm1] - 2*s, '-.', color='C1', **kwargs)
+    ax.plot(kls.cycles, kls.E_F[:, wm1] + 3*s, ls='dotted', color='tab:red', label='$\\kappa = 3$', **kwargs)
+    ax.plot(kls.cycles, kls.E_F[:, wm1] - 3*s, ls='dotted', color='tab:red', **kwargs)
+    ax.fill_between(kls.cycles, kls.E_F.min(axis=1), kls.E_F.max(axis=1), color='lightgrey')

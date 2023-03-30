@@ -9,6 +9,11 @@ from src.kinetic_PCR import HydrolysisProbes, plot_fluorescence_curve
 from src.molar_fluorescence import MolarFluorescence
 from src.wells import number_to_well
 
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "Helvetica"
+})
+plt.rc("text.latex", preamble="\\usepackage{amsmath} \\usepackage{amsfonts}")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -31,25 +36,25 @@ def plot_figure2(R=0.9, pbar=0.85, max_cycle=4):
     fig, ax = plt.subplots(figsize=(3.25, 3.25))
 
     for (EX0, EY0, label, marker) in [
-        (10, 10, r"$\mathbb{E}\left[N_0\right] = \mathbb{E}\left[X_0\right]/2$", 'x'),
-        (10, 0, r"$\mathbb{E}\left[N_0\right] = \mathbb{E}\left[X_0\right]$", 'o'),
-        (0, 10, r"$\mathbb{E}\left[N_0\right] = \mathbb{E}\left[Y_0\right]$", 'd')
+        (10, 10, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \left(5, 5\right)^\top$", 'x'),
+        (10, 0, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \left(10, 0\right)^\top$", 'o'),
+        (0, 10, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \left(0, 10\right)^\top$", 'd')
     ]:
-        cls = Amplification(R, pbar, np.array([[EX0], [EY0]]), np.random.random((2, 2)))
+        cls = Amplification(R, pbar, np.array([EX0, EY0]), np.random.random((2, 2)))
         ax.plot(cycles, cls.get_EXi_over_EYi(cycles), marker, label=label, mfc='None', ls='-')
 
-    ax.legend(loc=(0.4, 0.4), edgecolor='None', facecolor='None')
+    ax.legend(loc=(0.3, 0.3), edgecolor='None', facecolor='None')
     ax.set_xlabel("Cycle, $%s$" % CYCLE_SYMBOL)
     ax.set_ylabel(
-        r"$\dfrac{\mathbb{E}\left[X_%s\right]}{\mathbb{E}\left[Y_%s\right]}$" % (CYCLE_SYMBOL, CYCLE_SYMBOL),
-        rotation=0., labelpad=16
+        "$\\dfrac{\\mathbb{E}\\left[X_%s\\right]}{\\mathbb{E}\\left[Y_%s\\right]},$\nif\n$\\mathbb{E}\\left[Y_%s\\right]> 0$" % (CYCLE_SYMBOL, CYCLE_SYMBOL, CYCLE_SYMBOL),
+        rotation=0., labelpad=26
     )
-    ax.annotate("$R=%3.2f$" % R, xy=(2, 0.2), xycoords='data')
-    ax.annotate("$\\bar{p}=%3.2f$" % pbar, xy=(2, 0.1), xycoords='data')
+    ax.annotate("$R=%3.2f$" % R, xy=(1, 0.1), xycoords='data')
+    ax.annotate("$\\bar{p}=%3.2f$" % pbar, xy=(3, 0.1), xycoords='data')
 
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
-    fig.subplots_adjust(left=0.24, top=0.97, bottom=0.14, right=0.97)
+    fig.subplots_adjust(left=0.3, top=0.97, bottom=0.14, right=0.97)
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     fig.savefig(os.path.join(BASE_DIR, "out", "Fig2.png"), transparent=True, dpi=300)
 
@@ -61,18 +66,27 @@ def plot_figure4(cv_plus: np.ndarray, cv_minus: np.ndarray):
     edges = np.histogram_bin_edges(cv_plus, bins='fd') # Freedman Diaconis Estimator
     vals, edges = np.histogram(cv_plus, bins=edges)
     for i in range(1, edges.shape[0]-1):
+        if i == 1:
+            kwargs['label'] = "Active, $\\dfrac{\\sigma_{i,w}^{+}}{f_{i,w}^{+}}$"
         ax.plot([edges[i-1], edges[i], edges[i]], [vals[i-1], vals[i-1], vals[i]], '-', color='C0', **kwargs)
+        if i == 1:
+            kwargs.pop('label')
     i = edges.shape[0] - 2
     ax.plot([edges[i-1], edges[i]], [vals[i-1], vals[i-1]], '-', color='C0', **kwargs)
 
     edges = np.histogram_bin_edges(cv_minus, bins='fd') # Freedman Diaconis Estimator
     vals, edges = np.histogram(cv_minus, bins=edges)
     for i in range(1, edges.shape[0]-1):
+        if i == 1:
+            kwargs['label'] = "Inactive, $\\dfrac{\\sigma_{i,w}^{-}}{f_{i,w}^{-}}$"
         ax.plot([edges[i-1], edges[i], edges[i]], [vals[i-1], vals[i-1], vals[i]], ls='dotted', color='C1', **kwargs)
+        if i == 1:
+            kwargs.pop('label')
     i = edges.shape[0] - 2
     ax.plot([edges[i-1], edges[i]], [vals[i-1], vals[i-1]], ls='dotted', color='C1', **kwargs)
-    ax.annotate("Active, $\\dfrac{\\sigma_{i,w}^{+}}{f_{i,w}^{+}}$", xy=(0.5, 0.8), xycoords="axes fraction", color='C0')
-    ax.annotate("Inactive, $\\dfrac{\\sigma_{i,w}^{-}}{f_{i,w}^{-}}$", xy=(0.5, 0.5), xycoords="axes fraction", color='C1')
+    leg = ax.legend(facecolor='None', edgecolor='None')
+    for i, text in enumerate(leg.get_texts()):
+        text.set_color("C%i" % i)
     ax.set_ylabel("Count")
     ax.set_xlabel("$\\dfrac{\\sigma_{i,w}^{-}}{f_{i,w}^{-}}$ or $\\dfrac{\\sigma_{i,w}^{+}}{f_{i,w}^{+}}$ ")
 
@@ -81,6 +95,11 @@ def plot_figure4(cv_plus: np.ndarray, cv_minus: np.ndarray):
     ax.spines['right'].set_visible(False)
     ax.set_yticks([0., 50., 100, 150, 200, 250, 300])
     ax.set_ylim([0., 300.])
+
+    # Do outliers correspond to well A2?
+    cycle_outliers, well_outliers = np.where(cv_minus > 0.022)
+    assert set(well_outliers) == set((1,)), "Incorrect"
+    # print(len(cycle_outliers)) 45 total cycles
     fig.savefig(os.path.join(BASE_DIR, "out", "Fig4.png"), transparent=True, dpi=300)
 
 
@@ -104,10 +123,9 @@ def plot_figure5(model: HydrolysisProbes):
                              alpha=0.3, color=color)
     axes[0].legend(loc=(0.05, -0.25), ncol=4, edgecolor='None', facecolor='None')
 
-    axes[0].set_ylabel("$b_{i,w}$", rotation=0, labelpad=14)
-    axes[1].set_ylabel("$\\dfrac{d_{i,w}}{10^6}$", rotation=0, labelpad=14)
+    axes[0].set_ylabel("$b_{i,w}$", rotation=0, labelpad=26)
+    axes[1].set_ylabel("$d_{i,w}\\times 10^6$", rotation=0, labelpad=26)
     axes[1].set_xlabel("Cycle, $i$")
-    fig.subplots_adjust(left=0.15, right=0.98, top=0.99)
     for ax in (axes[0], axes[1]):
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
@@ -117,6 +135,7 @@ def plot_figure5(model: HydrolysisProbes):
                        21, 22, 23, 24, 26, 27, 28, 29, 31, 32, 33, 34, 36, 37, 38, 39,
                        41, 42, 43, 44], minor=True)
         ax.tick_params(axis="x", direction='in', which='both')
+    fig.subplots_adjust(left=0.22, right=0.98, top=0.99)
     fig.savefig(os.path.join(BASE_DIR, "out", "Fig5.png"), transparent=True, dpi=300)
 
 
@@ -145,8 +164,9 @@ def plot_figure6(model: HydrolysisProbes, wm1: int):
 
     fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(4.68504, 3.5), sharex=True, sharey=True)
     for I, icol in zip((64, 16, 8, 4), ((0, 0), (0, 1), (1, 0), (1, 1))):
-        model.E_U0 = np.ones((2, 1))*I
+        model.E_U0 = np.array([I, I])
         model.V_U0 = np.eye(2)*I
+        model.initialize()
         model.calculate()
 
         plot_fluorescence_curve(model, ax[icol], wm1)
@@ -201,15 +221,15 @@ def main():
     pbar = 0.9
     model = HydrolysisProbes(
         C, Vol, Plus.f, Minus.f, R, pbar,
-        np.zeros((2, 1)), np.zeros((2, 2)),
+        np.array([0., 0.]), np.zeros((2, 2)),
         Plus.df, Minus.df
     )
 
     plot_figure5(model)
 
-    plot_figure6(model, 0)
+    plot_figure6(model, 12)
 
-    plot_SI_figures(Plus, Minus)
+    # plot_SI_figures(Plus, Minus)
 
 
 if __name__ == '__main__':
