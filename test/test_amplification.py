@@ -73,7 +73,8 @@ def test_EXi_over_EYi():
         kls = Amplification(R, pbar, np.array([EX0, EY0]), np.random.random((2, 2)))
         EXi = a/2*l1**i + b/2*l2**i
         EYi = a/2/R*l1**i - b/2/R*l2**i
-        val1 = EXi/EYi
+        indices = EYi > 0
+        val1 = EXi[indices]/EYi[indices]
         val2 = kls.get_EXi_over_EYi(i)
-        error = val1 - val2
-        assert infty_norm(error[np.isfinite(error)]) < 1e-10, "EXi/EYi not correct!"
+        error = val1 - val2[indices]
+        assert infty_norm(error) < 1e-10, "EXi/EYi not correct!"
