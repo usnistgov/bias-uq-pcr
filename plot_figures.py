@@ -18,11 +18,13 @@ plt.rc("text.latex", preamble="\\usepackage{amsmath} \\usepackage{amsfonts}")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def plot_figure2(R=0.9, pbar=0.85, max_cycle=4):
+def plot_figure2(E_I=10, R=0.9, pbar=0.85, max_cycle=4):
     r"""
 
     Parameters
     ----------
+    E_I : int, optional
+        choice for :math:`\mathbb{E}\left[I\right]`, defaults to 10.
     R : float, optional
         choice for value of :math:`R`, defaults to 0.9
     pbar : float, optional
@@ -36,9 +38,9 @@ def plot_figure2(R=0.9, pbar=0.85, max_cycle=4):
     fig, ax = plt.subplots(figsize=(3.25, 3.25))
 
     for (EX0, EY0, label, marker, ls) in [
-        (10, 10, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \begin{pmatrix}5\\5\end{pmatrix}$", 'x', '-'),
-        (10, 0, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \begin{pmatrix}10\\0\end{pmatrix}$", 'o', '--'),
-        (0, 10, r"$\mathbb{E}\left[\boldsymbol{U}_0\right] = \begin{pmatrix}0 \\ 10\end{pmatrix}$", 'd', '-.')
+        (E_I//2, E_I//2, "$\\mathbb{E}\\left[\\boldsymbol{U}_0\\right] = \\begin{pmatrix}%i\\\\%i\\end{pmatrix}$" % (E_I//2, E_I//2), 'x', '-'),
+        (0, E_I, "$\\mathbb{E}\\left[\\boldsymbol{U}_0\\right] = \\begin{pmatrix}0 \\\\ %i\\end{pmatrix}$" % E_I, 'd', '-.'),
+        (E_I, 0, "$\\mathbb{E}\\left[\\boldsymbol{U}_0\\right] = \\begin{pmatrix}%i\\\\0\\end{pmatrix}$" % E_I, 'o', '--')
     ]:
         cls = Amplification(R, pbar, np.array([EX0, EY0]), np.random.random((2, 2)))
         ax.plot(cycles, cls.get_EXi_over_EYi(cycles), marker, label=label, mfc='None', ls=ls)
@@ -106,17 +108,28 @@ def plot_figure4(cv_plus: np.ndarray, cv_minus: np.ndarray):
 def plot_figure5(model: HydrolysisProbes):
     # plot background signals and such
     fig, axes = plt.subplots(figsize=(4.68504, 4.5), nrows=2, sharex=True, sharey=False)
-    for w, color in [(0, 'C0'), (13, "C1"), (26, "C2"), (39, "C3"),
-                     (52, "C4"), (65, "C5"), (78, "C6"), (91, "C7")]:
+
+    cmap = plt.get_cmap('viridis')
+    indices = np.linspace(0, cmap.N, 8)
+    for w, color, ls in [
+            (0, cmap(int(indices[0])), 'solid'), 
+            (13, cmap(int(indices[1])), 'dashed'), 
+            (26, cmap(int(indices[2])), 'solid'), 
+            (39, cmap(int(indices[3])), 'dashed'),
+            (52, cmap(int(indices[4])), 'solid'), 
+            (65, cmap(int(indices[5])), 'dashed'), 
+            (78, cmap(int(indices[6])), 'solid'), 
+            (91, cmap(int(indices[7])), 'dashed')
+        ]:
         bscale = 1.
         axes[0].plot(model.cycles, model.b[:, w] / bscale,
-                     color=color, label=number_to_well(w))
+                     color=color, label=number_to_well(w), ls=ls)
         axes[0].fill_between(model.cycles,
                              (model.b[:, w] - 2 * model.db[:, w]) / bscale,
                              (model.b[:, w] + 2 * model.db[:, w]) / bscale,
                              alpha=0.3, color=color)
         dscale = 1e-6
-        axes[1].plot(model.cycles, model.d[:, w] / dscale, color=color)
+        axes[1].plot(model.cycles, model.d[:, w] / dscale, color=color, ls=ls)
         axes[1].fill_between(model.cycles,
                              (model.d[:, w] - 2 * model.dd[:, w]) / dscale,
                              (model.d[:, w] + 2 * model.dd[:, w]) / dscale,
